@@ -1,238 +1,237 @@
-<div style="
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 36px 40px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.7;
-  color: #1a1a1a;
-  background: #ffffff;
-">
+# Reliability-Aware Drug–Drug Interaction Prediction
 
-<h1 style="text-align:center; color:#0b3c5d; font-size:2.4em; margin-bottom:6px;">
-Reliability-Aware Drug–Drug Interaction Prediction
-</h1>
+## Overview
 
-<p style="text-align:center; color:#555; font-size:1.05em;">
-A research-grade framework for leakage-free, uncertainty-aware, and reliability-calibrated DDI prediction
-</p>
+This repository presents a **research-grade framework for multi-class Drug–Drug Interaction (DDI) prediction** with a strong emphasis on **generalization, uncertainty modeling, and reliability auditing**.
 
-<hr style="margin:32px 0; border:0; border-top:1px solid #e6e6e6;">
+The system is trained on the **DrugBank dataset** and predicts **76 distinct interaction types** using a **Siamese Graph Neural Network (GNN)** architecture.  
+Evaluation is conducted under a **strict pair-level Murcko scaffold split**, ensuring **zero chemical scaffold leakage** between training, validation, and test sets.
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Overview</h2>
-
-<p>
-This repository presents a <strong>research-grade framework for multi-class Drug–Drug Interaction (DDI) prediction</strong>
-with a strong emphasis on <strong>generalization, uncertainty modeling, and reliability auditing</strong>.
-</p>
-
-<p>
-The system is trained on the <strong>DrugBank dataset</strong> and predicts
-<strong>76 distinct interaction types</strong> using a <strong>Siamese Graph Neural Network (GNN)</strong> architecture.
-Evaluation is conducted under a <strong>strict pair-level Murcko scaffold split</strong>,
-ensuring <strong>zero chemical scaffold leakage</strong> between training, validation, and test sets.
-</p>
-
-<p>
 Beyond standard predictive modeling, the framework integrates:
-</p>
+- epistemic uncertainty estimation via Monte Carlo Dropout,
+- an independent external auditor model,
+- and selective prediction based on a composite reliability score.
 
-<ul>
-  <li>Epistemic uncertainty estimation via Monte Carlo Dropout</li>
-  <li>An independent external auditor model</li>
-  <li>Selective prediction based on a composite reliability score</li>
-</ul>
+The goal of this project is not merely high accuracy, but **trustworthy, deployment-aware decision making** for safety-critical biomedical applications.
 
-<p>
-The goal of this project is not merely high accuracy, but
-<strong>trustworthy, deployment-aware decision making</strong> for safety-critical biomedical applications.
-</p>
+---
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Motivation</h2>
+## Motivation
 
-<p>
-Many existing DDI prediction systems report strong performance metrics but suffer from
-fundamental methodological weaknesses:
-</p>
+Many existing DDI prediction systems report strong performance metrics but suffer from fundamental methodological weaknesses:
 
-<ul>
-  <li>Chemical scaffold leakage between training and evaluation data</li>
-  <li>Inflated performance due to unrealistic random splits</li>
-  <li>No explicit modeling of prediction uncertainty</li>
-  <li>No independent mechanism to audit or verify predictions</li>
-  <li>Over-reliance on softmax confidence as a proxy for trustworthiness</li>
-</ul>
+- Chemical scaffold leakage between training and evaluation data
+- Inflated performance due to unrealistic random splits
+- No explicit modeling of prediction uncertainty
+- No independent mechanism to audit or verify predictions
+- Over-reliance on softmax confidence as a proxy for trustworthiness
 
-<p>
-In pharmacological and biomedical settings, such limitations can lead to
-<strong>unsafe or misleading conclusions</strong>.
-</p>
+In pharmacological and biomedical settings, such limitations can lead to **unsafe or misleading conclusions**.
 
-<p>
-This work prioritizes <strong>scientific rigor, reliability, and real-world deployment realism</strong>
-over headline accuracy.
-</p>
+This work prioritizes **scientific rigor, reliability, and real-world deployment realism** over headline accuracy.
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Key Contributions</h2>
+---
 
-<div style="background:#f8f9fa; border-left:4px solid #0b3c5d; padding:14px 18px; margin:18px 0;">
-<strong>1. Leakage-Free Evaluation Protocol</strong><br><br>
-<ul>
-  <li>Drug–drug interactions are split using a <strong>pair-level Murcko scaffold strategy</strong></li>
-  <li>Both drugs jointly define the scaffold identity of an interaction</li>
-  <li>Training and test sets share <strong>zero overlapping scaffolds</strong></li>
-  <li>Guarantees evaluation on <strong>genuinely unseen chemical structures</strong></li>
-</ul>
+## Key Contributions
+
+### 1. Leakage-Free Evaluation Protocol
+
+- Drug–drug interactions are split using a **pair-level Murcko scaffold strategy**
+- Both drugs jointly define the scaffold identity of an interaction
+- Training and test sets share **zero overlapping scaffolds**
+- Guarantees evaluation on **genuinely unseen chemical structures**
+
 This protocol closely reflects real-world drug discovery and pharmacovigilance scenarios.
-</div>
 
-<p><strong>2. Graph-Based Molecular Representation</strong></p>
+---
 
-<p>
+### 2. Graph-Based Molecular Representation
+
 Each drug is represented as a molecular graph constructed from SMILES strings using RDKit.
-</p>
 
-<p><em>Atom features include:</em></p>
-<ul>
-  <li>Atomic number</li>
-  <li>Total degree</li>
-  <li>Hybridization state</li>
-  <li>Aromaticity</li>
-  <li>Formal charge</li>
-  <li>Ring membership</li>
-  <li>Radical electrons</li>
-  <li>Chirality tag</li>
-</ul>
+**Atom features include:**
+- Atomic number
+- Total degree
+- Hybridization state
+- Aromaticity
+- Formal charge
+- Ring membership
+- Radical electrons
+- Chirality tag
 
-<p><em>Bond features include:</em></p>
-<ul>
-  <li>Bond type</li>
-  <li>Conjugation</li>
-  <li>Ring participation</li>
-</ul>
+**Bond features include:**
+- Bond type
+- Conjugation
+- Ring participation
 
-<p>
 This representation preserves detailed chemical structure and topology.
-</p>
 
-<p><strong>3. Siamese Graph Neural Network Architecture</strong></p>
+---
 
-<ul>
-  <li>Two identical GATv2-based encoders (one per drug)</li>
-  <li>Edge-aware attention convolutions</li>
-  <li>Layer normalization and dropout for stability</li>
-  <li>Global mean and max pooling</li>
-  <li>Fully connected classifier for interaction prediction</li>
-</ul>
+### 3. Siamese Graph Neural Network Architecture
 
-<p>
-This architecture learns <strong>interaction-specific patterns</strong>,
-not just individual molecular properties.
-</p>
+The predictive model follows a **Siamese GNN design with shared weights**:
 
-<p><strong>4. Imbalance-Aware Training Strategy</strong></p>
+- Two identical GATv2-based encoders (one per drug)
+- Edge-aware attention convolutions
+- Layer normalization and dropout for stability
+- Global mean and max pooling
+- Fully connected classifier for interaction prediction
 
-<ul>
-  <li>Class-balanced weighting</li>
-  <li>Square-root reweighting</li>
-  <li>Focal loss for hard and minority classes</li>
-  <li>Gradient clipping for training stability</li>
-  <li>Mixed-precision training (AMP) for efficiency</li>
-</ul>
+This architecture learns **interaction-specific patterns**, not just individual molecular properties.
 
-<p><strong>5. Generalization Performance</strong></p>
+---
 
-<ul>
-  <li>Weighted F1-score: <strong>≈ 0.84–0.85</strong></li>
-  <li>Macro F1-score: <strong>≈ 0.82–0.83</strong></li>
-  <li>Number of interaction classes: <strong>76</strong></li>
-</ul>
+### 4. Imbalance-Aware Training Strategy
 
-<p>
-All metrics are reported on a <strong>scaffold-held-out test set</strong>,
-demonstrating strong generalization.
-</p>
+The dataset exhibits strong class imbalance across interaction types.
 
-<p><strong>6. Uncertainty Estimation (MC Dropout)</strong></p>
+This is addressed through:
+- Class-balanced weighting
+- Square-root reweighting
+- Focal loss for hard and minority classes
+- Gradient clipping for training stability
+- Mixed-precision training (AMP) for computational efficiency
 
-<ul>
-  <li>Dropout active at inference time</li>
-  <li>Multiple stochastic forward passes</li>
-  <li>Entropy-based uncertainty estimation</li>
-</ul>
+---
 
-<p><strong>7. External Reliability Auditor</strong></p>
+### 5. Generalization Performance
 
-<ul>
-  <li>Independent Random Forest auditor</li>
-  <li>Morgan fingerprint-based drug pair representation</li>
-  <li>Cross-validated consistency checking</li>
-</ul>
+All reported metrics are obtained from a **scaffold-held-out test set**.
 
-<p><strong>8. Reliability Scoring & Selective Prediction</strong></p>
+- Weighted F1-score: approximately **0.84–0.85**
+- Macro F1-score: approximately **0.82–0.83**
+- Number of interaction classes: **76**
 
-<ul>
-  <li>Confidence-based scoring</li>
-  <li>Uncertainty penalties</li>
-  <li>Class rarity penalties</li>
-  <li>Auditor agreement weighting</li>
-</ul>
+These results demonstrate strong generalization under chemically realistic evaluation conditions.
 
-<p>
-Accuracy improves as coverage decreases:
-</p>
+---
 
-<ul>
-  <li>100% coverage → ~0.85 accuracy</li>
-  <li>80% coverage → ~0.92 accuracy</li>
-  <li>60% coverage → ~0.96 accuracy</li>
-  <li>40% coverage → ~0.98 accuracy</li>
-</ul>
+### 6. Uncertainty Estimation via Monte Carlo Dropout
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Intended Applications</h2>
+Epistemic uncertainty is modeled using **Monte Carlo Dropout**:
 
-<ul>
-  <li>Drug–drug interaction screening</li>
-  <li>Pharmacovigilance research</li>
-  <li>Reliability-aware biomedical machine learning</li>
-  <li>Decision-support systems for early-stage drug discovery</li>
-</ul>
+- Dropout layers remain active at inference time
+- Multiple stochastic forward passes are performed
+- Mean predictive probabilities and entropy are computed
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Limitations & Future Work</h2>
+This allows quantification of **model uncertainty per prediction**, rather than relying solely on softmax confidence.
 
-<ul>
-  <li>Single-dataset evaluation (DrugBank)</li>
-  <li>Single-seed training</li>
-  <li>Auditor limited to classical ML models</li>
-</ul>
+---
 
-<p>
-Future work includes multi-dataset validation, seed-averaged analysis,
-and neural or ensemble-based auditors.
-</p>
+### 7. External Reliability Auditor
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Ethical Considerations</h2>
+In addition to uncertainty modeling, the framework employs an **independent external auditor**:
 
-<p>
-This framework is intended <strong>strictly for research and educational use</strong>.
-It must not be used for clinical decision-making without expert validation
-and regulatory approval.
-</p>
+- Auditor model: Random Forest classifier
+- Input: concatenated Morgan fingerprints of drug pairs
+- Evaluation: stratified cross-validation
+- Provides an external consistency check against GNN predictions
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Author</h2>
+Disagreement between the GNN and the auditor reduces the final reliability score.
 
-<p>
-<strong>Gaurav</strong><br>
-Machine Learning Engineer<br>
+---
+
+### 8. Reliability Scoring Mechanism
+
+For each test prediction, a reliability score is computed by combining:
+
+- Model confidence (softmax probability)
+- MC Dropout uncertainty (entropy-based penalty)
+- Class rarity penalty (based on training distribution)
+- Auditor agreement or disagreement
+
+This score reflects **how trustworthy a prediction is**, not merely how confident the model appears.
+
+---
+
+### 9. Selective Prediction and Risk Control
+
+Using reliability scores, the system supports **selective prediction**:
+
+- Low-reliability predictions can be rejected or deferred
+- Accuracy increases as coverage decreases
+
+Observed behavior on the test set:
+
+- Full coverage accuracy ≈ 0.85
+- ~80% coverage → accuracy ≈ 0.92
+- ~60% coverage → accuracy ≈ 0.96
+- ~40% coverage → accuracy ≈ 0.98
+
+This behavior is essential for **safety-critical biomedical applications**.
+
+---
+
+## Research Artifacts
+
+The framework produces and stores the following reproducible artifacts:
+
+- Fine-tuned Siamese GNN model
+- Trained Random Forest auditor
+- Confusion matrix (CSV)
+- Calibration curve
+- Selective prediction results
+- Full experiment metadata (JSON)
+
+All artifacts are reproducible and export-ready.
+
+---
+
+## Intended Applications
+
+- Drug–drug interaction screening
+- Pharmacovigilance research
+- Reliability-aware biomedical machine learning
+- Decision-support systems for early-stage drug discovery
+
+This project is intended strictly for **research and educational use**.
+
+---
+
+## Strengths
+
+- Zero scaffold leakage evaluation
+- Strong generalization to unseen chemical structures
+- Explicit uncertainty modeling via MC Dropout
+- Independent reliability auditing
+- Selective prediction for risk-aware decision making
+- Comprehensive artifact logging and reproducibility
+
+---
+
+## Limitations and Future Work
+
+- No full baseline comparison under identical scaffold splits
+- Evaluation limited to a single dataset (DrugBank)
+- Training performed with a single random seed
+- Auditor limited to classical fingerprint-based models
+
+Future work may explore:
+- Multi-dataset validation (e.g., TWOSIDES)
+- Seed-averaged statistical analysis
+- Neural or ensemble-based auditor models
+- Joint training of predictor and auditor components
+
+---
+
+## Ethical Considerations
+
+This framework is intended **solely for defensive biomedical research and decision support**.  
+It must not be used for clinical decision making without expert validation and regulatory approval.
+
+---
+
+## Author
+
+**Gaurav**  
+Machine Learning Engineer  
 Focus areas: Graph Neural Networks, Biomedical AI, Reliable Deep Learning
-</p>
 
-<h2 style="color:#0b3c5d; border-bottom:2px solid #e6e6e6; padding-bottom:8px;">Summary</h2>
+---
 
-<p>
-This work demonstrates that <strong>accurate DDI prediction alone is insufficient</strong>.
-By combining leakage-free evaluation, graph-based modeling, uncertainty estimation,
-and independent reliability auditing, the framework provides a
-<strong>trustworthy and deployment-aware solution</strong> for drug–drug interaction prediction.
-</p>
+## Summary
 
-</div>
+This work demonstrates that **accurate DDI prediction alone is insufficient for real-world use**.
+
+By combining leakage-free evaluation, graph-based modeling, uncertainty estimation, and independent reliability auditing, the framework provides a **more trustworthy and deployment-aware approach** to drug–drug interaction prediction.

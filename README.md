@@ -1,13 +1,86 @@
-<div style="
-  max-width: 980px;
-  margin: auto;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.65;
+<style>
+.research-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.7;
   color: #1a1a1a;
   background: #ffffff;
-  padding: 24px 28px;
-">
-</div>
+  padding: 36px 40px;
+}
+
+/* Title */
+.research-container h1 {
+  font-size: 2.4em;
+  text-align: center;
+  margin-bottom: 4px;
+  color: #0b3c5d;
+  letter-spacing: 0.3px;
+}
+
+/* Subtitle */
+.research-container h3 {
+  text-align: center;
+  font-weight: 400;
+  color: #555;
+  margin-top: 6px;
+}
+
+/* Section headers */
+.research-container h2 {
+  margin-top: 48px;
+  font-size: 1.6em;
+  color: #0b3c5d;
+  border-bottom: 2px solid #e6e6e6;
+  padding-bottom: 8px;
+}
+
+/* Subsections */
+.research-container h4 {
+  margin-top: 28px;
+  font-size: 1.15em;
+  color: #123c69;
+}
+
+/* Paragraphs */
+.research-container p {
+  margin: 14px 0;
+  text-align: justify;
+}
+
+/* Lists */
+.research-container ul {
+  margin: 12px 0 12px 28px;
+}
+
+.research-container li {
+  margin: 6px 0;
+}
+
+/* Highlight blocks (for contributions, results) */
+.research-container blockquote {
+  border-left: 4px solid #0b3c5d;
+  background: #f8f9fa;
+  padding: 14px 18px;
+  margin: 18px 0;
+  color: #222;
+}
+
+/* Inline emphasis */
+.research-container strong {
+  color: #0b3c5d;
+}
+
+/* Code / filenames */
+.research-container code {
+  background: #f3f3f3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+</style>
+
+<div class="research-container">
 # Reliability-Aware Drug–Drug Interaction Prediction
 
 ## Overview
